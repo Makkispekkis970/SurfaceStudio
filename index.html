@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surface Studio</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <aside class="rail left-rail">
+        <div class="brand">
+          <span class="mark">SS</span>
+          <div>
+            <h1>Surface Studio</h1>
+            <p>3D room material planner</p>
+          </div>
+        </div>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Room Size</h2>
+            <button id="resetBtn" class="icon-btn" type="button">Reset</button>
+          </div>
+          <div class="grid-3">
+            <label class="field">
+              <span>Width, m</span>
+              <input id="roomWidth" type="text" inputmode="decimal" value="4.8" />
+            </label>
+            <label class="field">
+              <span>Depth, m</span>
+              <input id="roomDepth" type="text" inputmode="decimal" value="3.6" />
+            </label>
+            <label class="field">
+              <span>Height, m</span>
+              <input id="roomHeight" type="text" inputmode="decimal" value="2.7" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Surfaces</h2>
+          </div>
+          <div id="surfaceList" class="surface-list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Material Presets</h2>
+          </div>
+          <div id="styleGrid" class="style-grid"></div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <strong id="roomName">Untitled Room</strong>
+            <span id="status">Right-drag to look around. Wheel moves through the room. Click any surface to edit it.</span>
+          </div>
+          <div class="top-actions">
+            <button id="saveBtn" type="button">Save</button>
+            <button id="exportBtn" type="button">Export PNG</button>
+          </div>
+        </header>
+
+        <section class="viewport-shell">
+          <canvas id="roomCanvas"></canvas>
+        </section>
+
+        <footer class="layer-strip">
+          <span>Editing</span>
+          <strong id="activeLayerLabel">Back Wall</strong>
+          <span id="layerHint">Wheel moves forward/back. Right-drag looks around. Shift+right-drag pans.</span>
+        </footer>
+      </section>
+
+      <aside class="rail right-rail">
+        <section class="panel">
+          <div class="section-title">
+            <h2>Base Surface</h2>
+          </div>
+
+          <label class="field">
+            <span>Material</span>
+            <select id="materialSelect">
+              <option value="pineCladding">Warm pine cladding</option>
+              <option value="woodPlank">Long wood boards</option>
+              <option value="paintedPlank">Painted panel boards</option>
+              <option value="laminate">Laminate flooring</option>
+              <option value="ceramicTile">Ceramic tile</option>
+              <option value="zelligeTile">Zellige tile</option>
+              <option value="floorTile">Floor tile</option>
+              <option value="stoneSlab">Stone slab</option>
+              <option value="terrazzo">Terrazzo</option>
+              <option value="solid">Smooth painted surface</option>
+              <option value="limewash">Limewash plaster</option>
+            </select>
+          </label>
+
+          <div class="color-row">
+            <label class="field">
+              <span>Base color</span>
+              <input id="primaryColor" type="color" value="#b4743b" />
+            </label>
+            <label class="field">
+              <span>Variation color</span>
+              <input id="secondaryColor" type="color" value="#e1a867" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Board / tile layout</span>
+            <select id="layoutSelect">
+              <option value="vertical">Vertical boards</option>
+              <option value="horizontal">Horizontal boards</option>
+              <option value="stacked">Stacked tiles</option>
+              <option value="offset">Offset pattern</option>
+              <option value="herringbone">Herringbone</option>
+              <option value="large">Large slabs</option>
+            </select>
+          </label>
+
+          <div class="grid-2">
+            <label class="field">
+              <span>Piece length, cm</span>
+              <input id="unitWidth" type="text" inputmode="numeric" value="320" />
+            </label>
+            <label class="field">
+              <span>Piece width, cm</span>
+              <input id="unitHeight" type="text" inputmode="numeric" value="12" />
+            </label>
+            <label class="field">
+              <span>Gap, mm</span>
+              <input id="jointSize" type="text" inputmode="numeric" value="4" />
+            </label>
+            <label class="field">
+              <span>Natural variation</span>
+              <input id="variationRange" type="range" min="0" max="100" value="76" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2>Fade Paint Overlay</h2>
+          </div>
+
+          <label class="toggle-row">
+            <input id="overlayEnabled" type="checkbox" checked />
+            <span>Paint over base material</span>
+          </label>
+
+          <div class="color-row">
+            <label class="field">
+              <span>Paint color</span>
+              <input id="overlayColor" type="color" value="#f0eadf" />
+            </label>
+            <label class="field">
+              <span>Fade target</span>
+              <select id="overlayMode">
+                <option value="transparent">Transparent</option>
+                <option value="color">Second color</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field" id="overlayEndColorField">
+            <span>Second color</span>
+            <input id="overlayEndColor" type="color" value="#a6d8d4" />
+          </label>
+
+          <div class="grid-2">
+            <label class="field">
+              <span>Start opacity <strong id="overlayStartValue">75%</strong></span>
+              <input id="overlayStartOpacity" type="range" min="0" max="100" value="75" />
+            </label>
+            <label class="field">
+              <span>End opacity <strong id="overlayEndValue">0%</strong></span>
+              <input id="overlayEndOpacity" type="range" min="0" max="100" value="0" />
+            </label>
+            <label class="field">
+              <span>Fade angle <strong id="overlayAngleValue">90 deg</strong></span>
+              <input id="overlayAngle" type="range" min="0" max="360" value="90" />
+            </label>
+            <label class="field">
+              <span>Fade position <strong id="overlayPositionValue">50%</strong></span>
+              <input id="overlayPosition" type="range" min="0" max="100" value="50" />
+            </label>
+            <label class="field">
+              <span>Fade reach <strong id="overlayReachValue">90%</strong></span>
+              <input id="overlayReach" type="range" min="5" max="100" value="90" />
+            </label>
+            <label class="field">
+              <span>Softness <strong id="overlaySoftnessValue">35%</strong></span>
+              <input id="overlaySoftness" type="range" min="0" max="100" value="35" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel spec-card">
+          <div class="section-title">
+            <h2>Specification</h2>
+          </div>
+          <div id="specSummary" class="spec-summary"></div>
+        </section>
+      </aside>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
